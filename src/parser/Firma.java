@@ -77,7 +77,27 @@ public class Firma {
     public void setWojewodztwo(String wojewodztwo){
         this.wojewodztwo = wojewodztwo.replace("|", "");
     }
-    
+
+    public void setdMiejscowosc(String dMiejscowosc) {
+        this.dMiejscowosc = dMiejscowosc;
+    }
+
+    public void setdUlica(String dUlica) {
+        this.dUlica = dUlica;
+    }
+
+    public void setdBudynek(String dBudynek) {
+        this.dBudynek = dBudynek;
+    }
+
+    public void setdKodPocztowy(String dKodPocztowy) {
+        this.dKodPocztowy = dKodPocztowy;
+    }
+
+    public void setdPoczta(String dPoczta) {
+        this.dPoczta = dPoczta;
+    }
+
     public void setObywatelstwo(String obywatelstwo){
         this.obywatelstwo = obywatelstwo.replace("|", "");
     }
@@ -120,36 +140,71 @@ public class Firma {
         
         return in;
     }*/
-    
-    @Override
-    public String toString(){
-        return this.identyfikatorWpisu  + "|" +
-               this.imie  + "|" +
-               this.nazwisko  + "|" +
-               this.nip  + "|" +
-               this.regon  + "|" +
-               this.nazwaFirmy  + "|" +
-               this.telefon  + "|" +
-               this.faks  + "|" +
-               this.adresPocztyElektronicznej  + "|" +
-               this.adresStronyInternetowej  + "|" +
-               this.miejscowosc  + "|" +
-               this.ulica  + "|" +
-               this.budynek  + "|" +
-               this.lokal  + "|" +
-               this.kodPocztowy  + "|" +
-               this.poczta  + "|" +
-               this.powiat  + "|" +
-               this.wojewodztwo  + "|" +
-               this.obywatelstwo  + "|" +
-               this.dataRozpoczecia  + "|" +
-               this.dataZawieszenia  + "|" +
-               this.dataWznowienia  + "|" +
-               this.dataZaprzestania  + "|" +
-               this.dataWykreslenia  + "|" +
-               this.malzenskaWspolnoscMajatkowa  + "|" +
-               this.status  + "|" +
-               this.pkd;
+
+
+    public String toString(Boolean firma){
+        if(firma) {
+            return this.identyfikatorWpisu + "|" +
+                    this.imie + "|" +
+                    this.nazwisko + "|" +
+                    this.nip + "|" +
+                    this.regon + "|" +
+                    this.nazwaFirmy + "|" +
+                    this.telefon + "|" +
+                    this.faks + "|" +
+                    this.adresPocztyElektronicznej + "|" +
+                    this.adresStronyInternetowej + "|" +
+                    this.miejscowosc + "|" +
+                    this.ulica + "|" +
+                    this.budynek + "|" +
+                    this.lokal + "|" +
+                    this.kodPocztowy + "|" +
+                    this.poczta + "|" +
+                    this.powiat + "|" +
+                    this.wojewodztwo + "|" +
+                    this.obywatelstwo + "|" +
+                    this.dataRozpoczecia + "|" +
+                    this.dataZawieszenia + "|" +
+                    this.dataWznowienia + "|" +
+                    this.dataZaprzestania + "|" +
+                    this.dataWykreslenia + "|" +
+                    this.malzenskaWspolnoscMajatkowa + "|" +
+                    this.status + "|" +
+                    this.pkd;
+        } else {
+            return this.identyfikatorWpisu + "|" +
+                    this.imie + "|" +
+                    this.nazwisko + "|" +
+                    this.nip + "|" +
+                    this.regon + "|" +
+                    this.nazwaFirmy + "|" +
+                    this.telefon + "|" +
+                    this.faks + "|" +
+                    this.adresPocztyElektronicznej + "|" +
+                    this.adresStronyInternetowej + "|" +
+                    this.miejscowosc + "|" +
+                    this.ulica + "|" +
+                    this.budynek + "|" +
+                    this.lokal + "|" +
+                    this.kodPocztowy + "|" +
+                    this.poczta + "|" +
+                    this.powiat + "|" +
+                    this.wojewodztwo + "|" +
+                    this.dMiejscowosc + "|" +
+                    this.dUlica + "|" +
+                    this.dBudynek + "|" +
+                    this.dKodPocztowy + "|" +
+                    this.dPoczta + "|" +
+                    this.obywatelstwo + "|" +
+                    this.dataRozpoczecia + "|" +
+                    this.dataZawieszenia + "|" +
+                    this.dataWznowienia + "|" +
+                    this.dataZaprzestania + "|" +
+                    this.dataWykreslenia + "|" +
+                    this.malzenskaWspolnoscMajatkowa + "|" +
+                    this.status + "|" +
+                    this.pkd;
+        }
     }
     
     private String identyfikatorWpisu= "";
@@ -170,6 +225,11 @@ public class Firma {
     private String poczta= "";
     private String powiat= "";
     private String wojewodztwo= "";
+    private String dMiejscowosc = "";
+    private String dUlica = "";
+    private String dBudynek = "";
+    private String dKodPocztowy = "";
+    private String dPoczta = "";
     private String obywatelstwo= "";
     private String dataRozpoczecia= "";
     private String dataZawieszenia= "";

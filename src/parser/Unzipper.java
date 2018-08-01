@@ -23,17 +23,6 @@ public class Unzipper {
         
         
     	File[] listaPlikowZip = folderZip.listFiles(Parser.FILTR_ZIP);
-                
-                /*new FilenameFilter() {
-			
-			@Override
-			public boolean accept(File dir, String name) {
-				String lowercaseName = name.toLowerCase();
-				return lowercaseName.endsWith(".zip") && lowercaseName.startsWith("calosc_");
-			}
-		});*/
-        
-        
         
         //czyszcze folder wyjsciowy z plikow xml jeśli zawiera pliki
         if(folderWyjsciowy.listFiles(Parser.FILTR_XML) != null){

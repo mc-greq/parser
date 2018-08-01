@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -20,14 +21,16 @@ public class Parser {
 
     public static void main(String[] args){
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+        Boolean testExAddress = false;
         
         File folderXml = new File(System.getProperty("user.dir") + "/XML/");
+        File folderZip = new File(System.getProperty("user.dir"));
 
         try {
         	
             // obiekt unzippera do rozpakowania archiwów z plikami xml
-            Unzipper unzipper = new Unzipper();        
-            unzipper.unzipList(new File(System.getProperty("user.dir")), folderXml);
+            Unzipper unzipper = new Unzipper();
+            unzipper.unzipList(folderZip, folderXml);
             
             SAXParser saxParser = saxParserFactory.newSAXParser();
             
@@ -37,6 +40,8 @@ public class Parser {
             FileWriter outSUprawnienie = new FileWriter("uprawnienia.txt");
             //otwieram strumien zapisu dla oddziałów
             FileWriter outSOddzial = new FileWriter("oddzialy.txt");
+            //otwieram strumien zapisu dla firm bez adresu calosc_calosc_ExtendedAddress_.xml
+            FileWriter outExAddress = new FileWriter("no_address.txt");
             
             //drukuję strukturę pliku dla Firm - tworzyć tutaj czy we własnej klasie strumień?
             outSFirma.write("IdentyfikatorWpisu|"
@@ -67,6 +72,40 @@ public class Parser {
                         + "Status|"
                         + "KodyPKD"
                         + System.getProperty("line.separator"));
+
+            outExAddress.write("IdentyfikatorWpisu|"
+                    + "pImie|"
+                    + "pNazwisko|"
+                    + "pNip|"
+                    + "pREGON|"
+                    + "pFirma|"
+                    + "Telefon|"
+                    + "Faks|"
+                    + "AdresPocztyElektronicznej|"
+                    + "AdresStronyInternetowej|"
+                    + "gMiejscowosc|"
+                    + "gUlica|"
+                    + "gBudynek|"
+                    + "gLokal|"
+                    + "gKodPocztowy|"
+                    + "gPoczta|"
+                    + "gPowiat|"
+                    + "gWojewodztwo|"
+                    + "dMiejscowsc|"
+                    + "dUlica|"
+                    + "dBudynek|"
+                    + "dKodPocztowy|"
+                    + "dPoczta|"
+                    + "PrzedsiebiorcaPosiadaObywatelstwaPanstw|"
+                    + "DataRozpoczeciaWykonywaniaDzialalnosciGospodarczej|"
+                    + "DataZawieszeniaWykonywaniaDzialalnosciGospodarczej|"
+                    + "DataWznowieniaWykonywaniaDzialalnosciGospodarczej|"
+                    + "DataZaprzestaniaWykonywaniaDzialalnosciGospodarczej|"
+                    + "DataWykresleniaWpisuZRejestru|"
+                    + "MalzenskaWspolnoscMajatkowa|"
+                    + "Status|"
+                    + "KodyPKD"
+                    + System.getProperty("line.separator"));
             
             //drukuję strukturę pliku dla uprawnień
             outSUprawnienie.write("IdentyfikatorWpisu|"
@@ -93,7 +132,7 @@ public class Parser {
             				+ System.getProperty("line.separator"));
             
             //tworzę obiekt handlera i przesyłam do konstruktora strumienie zapisu
-            MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial);
+//            MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial);
             
             //pobieram pliki XML z folderu
 
@@ -105,10 +144,20 @@ public class Parser {
             else {
                 for (File plik : listaPlikow) {
                     System.out.println(plik);
-                    saxParser.parse(plik, handler);
+                    if(plik.getName().equals("calosc_ExtendedAddress_.xml")) {
+                        MyHandler handler = new MyHandler(null, outSUprawnienie, outSOddzial,outExAddress);
+                        saxParser.parse(plik, handler);
+                        testExAddress = true;
+                    } else {
+                        MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial,null);
+                        saxParser.parse(plik, handler);
+                    }
+                }
+
+                if(!testExAddress){
+                    Files.deleteIfExists(new File("no_address.txt").toPath());
                 }
             }
-            
 
             //odpalam parsowanie przy pomocy handlera
             //saxParser.parse(new File(System.getProperty("user.dir") + File.separator + "test.xml"), handler);
@@ -120,6 +169,7 @@ public class Parser {
             outSFirma.close();
             outSUprawnienie.close();
             outSOddzial.close();
+            outExAddress.close();
             
             //print employee information
             //for(Firma emp : listaFirm)
@@ -131,15 +181,14 @@ public class Parser {
         
     }
 
+    public static final FilenameFilter FILTR_NO_ADDRESS_XML = (dir, name) -> {
+        String lowercaseName = name.toLowerCase();
+        return lowercaseName.equals("calosc_ExtendedAddress_.xml");
+    };
 
-
-    public static final FilenameFilter FILTR_XML = new FilenameFilter() {
-
-        @Override
-        public boolean accept(File dir, String name) {
-            String lowercaseName = name.toLowerCase();
-            return lowercaseName.endsWith(".xml");
-        }
+    public static final FilenameFilter FILTR_XML = (dir, name) -> {
+        String lowercaseName = name.toLowerCase();
+        return lowercaseName.endsWith(".xml");
     };
     
     public static final FilenameFilter FILTR_ZIP = new FilenameFilter() {

@@ -10,11 +10,21 @@ import org.xml.sax.helpers.DefaultHandler;
 public class MyHandler extends DefaultHandler{
     
     //własny konstruktor wywołujący konstruktor nadrzędny i dodatkowo przyjmujący strumienie do zapisu pliku
-    public MyHandler(FileWriter outSFirma, FileWriter outSUprawnienie, FileWriter outSOddzial){
+    //sprawdzamy który plik ma byc zapisywany - plik główny ze strumienia outSFirma czy plik bez danych adresowych outExAddress
+    public MyHandler(FileWriter outSFirma, FileWriter outSUprawnienie, FileWriter outSOddzial, FileWriter outExAddress){
         super();
-        this.outSFirma = outSFirma;
+        if(outSFirma != null) {
+            this.outSFirma = outSFirma;
+        } else {
+            this.outSFirma = null;
+        }
         this.outSUprawnienie = outSUprawnienie;
         this.outSOddzial = outSOddzial;
+        if(outExAddress != null){
+            this.outExAddress = outExAddress;
+        } else {
+            this.outExAddress = null;
+        }
     }
     
     //private List<Firma> listaFirm = null;
@@ -35,6 +45,7 @@ public class MyHandler extends DefaultHandler{
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes atrbts) throws SAXException {
+
         if(qName.equalsIgnoreCase("InformacjaOWpisie")){
             //stworz nowy obiekt firma
             firma = new Firma();
@@ -109,9 +120,27 @@ public class MyHandler extends DefaultHandler{
         } else if (qName.equalsIgnoreCase("Powiat") && adresGlowny){
             powiat = true;
         
-        } else if (qName.equalsIgnoreCase("Wojewodztwo") && adresGlowny){
+        } else if (qName.equalsIgnoreCase("Wojewodztwo") && adresGlowny) {
             wojewodztwo = true;
-        
+
+        } else if (qName.equalsIgnoreCase("AdresDoDoreczen") && daneAdresowe && outExAddress != null) {
+            adresDoDoreczen = true;
+
+        } else if (qName.equalsIgnoreCase("Miejscowosc") && adresDoDoreczen) {
+            dMiejscowosc = true;
+
+        } else if (qName.equalsIgnoreCase("Ulica") && adresDoDoreczen) {
+            dUlica = true;
+
+        } else if (qName.equalsIgnoreCase("Budynek") && adresDoDoreczen) {
+            dBudynek = true;
+
+        } else if (qName.equalsIgnoreCase("KodPocztowy") && adresDoDoreczen) {
+            dKodPocztowy = true;
+
+        } else if (qName.equalsIgnoreCase("Poczta") && adresDoDoreczen) {
+            dPoczta = true;
+
         } else if (qName.equalsIgnoreCase("PrzedsiebiorcaPosiadaObywatelstwaPanstw") && daneAdresowe){
             obywatelstwo = true;
         
@@ -213,13 +242,23 @@ public class MyHandler extends DefaultHandler{
     
             try {
                 //jeśli trafi na element znaczący koniec rekordu zapisuje ten rekord do pliku przy pomocy przesłanego strumienia
-                outSFirma.write(firma.toString()
-	                                    .replace("\n", " ")
-	                                    .replace("\r", " ")
-	                                    .replace("\t", " ")
-	                                    .replace("  ", " ")
-	                                    + System.getProperty("line.separator"));
-                
+                //zapisujemy do strumienia głównego pliku
+                if(outSFirma != null) {
+                    outSFirma.write(firma.toString(true)
+                            .replace("\n", " ")
+                            .replace("\r", " ")
+                            .replace("\t", " ")
+                            .replace("  ", " ")
+                            + System.getProperty("line.separator"));
+                //zapisujemy do strumienia pliku bez adresów
+                } else if(outExAddress != null){
+                    outExAddress.write(firma.toString(false)
+                            .replace("\n", " ")
+                            .replace("\r", " ")
+                            .replace("\t", " ")
+                            .replace("  ", " ")
+                            + System.getProperty("line.separator"));
+                }
                 //jeśli odnaleziono uprawnienie to jest ono zapisywane do pliku
                 if(!uprawnienieTemp.equals("")){
                     uprawnienie = new Uprawnienie(identyfikatorWpisuTemp, regonTemp, nipTemp, uprawnienieTemp);
@@ -255,6 +294,9 @@ public class MyHandler extends DefaultHandler{
             
         } else if (qName.equalsIgnoreCase("AdresGlownegoMiejscaWykonywaniaDzialalnosci") && adresGlowny){
             adresGlowny = false; // pod koniec adresu głównego czyścimy flagę
+
+        } else if (qName.equalsIgnoreCase("AdresDoDoreczen") && adresGlowny && outExAddress != null){
+            adresDoDoreczen = false; // pod koniec adresu do doręczeń czyścimy flagę, działa to tylko przy zapisie firm bez adresów
             
         } else if (qName.equalsIgnoreCase("Uprawnienia") && uprawnieniaKategoria){
             uprawnieniaKategoria = false; // pod koniec uprawnień czyścimy flagę
@@ -378,7 +420,38 @@ public class MyHandler extends DefaultHandler{
             
         /**
          * Koniec danych adresowych centrali
-         * 
+         *
+         * Początek adresów do doręczeń
+         */
+
+        } else if (qName.equalsIgnoreCase("Miejscowosc") && dMiejscowosc && adresDoDoreczen){
+            firma.setdMiejscowosc(textContent.toString());
+            textContent.setLength(0);
+            dMiejscowosc = false;
+
+        } else if (qName.equalsIgnoreCase("Ulica") && dUlica && adresDoDoreczen){
+            firma.setdUlica(textContent.toString());
+            textContent.setLength(0);
+            dUlica = false;
+
+        } else if (qName.equalsIgnoreCase("Budynek") && dBudynek && adresDoDoreczen){
+            firma.setdBudynek(textContent.toString());
+            textContent.setLength(0);
+            dBudynek = false;
+
+        } else if (qName.equalsIgnoreCase("KodPocztowy") && dKodPocztowy && adresDoDoreczen){
+            firma.setdKodPocztowy(textContent.toString());
+            textContent.setLength(0);
+            dKodPocztowy = false;
+
+        } else if (qName.equalsIgnoreCase("Poczta") && dPoczta && adresDoDoreczen){
+            firma.setdPoczta(textContent.toString());
+            textContent.setLength(0);
+            dPoczta = false;
+
+        /**
+         * Koniec adresów do doręczeń
+         *
          * Początek danych adresowych oddziału
          */
             
@@ -561,6 +634,21 @@ public class MyHandler extends DefaultHandler{
         
         } else if(wojewodztwo){
             textContent.append(ch, start, length);
+
+        } else if(dMiejscowosc) {
+            textContent.append(ch, start, length);
+
+        } else if(dUlica) {
+            textContent.append(ch, start, length);
+
+        } else if(dBudynek) {
+            textContent.append(ch, start, length);
+
+        } else if(dKodPocztowy) {
+            textContent.append(ch, start, length);
+
+        } else if(dPoczta){
+            textContent.append(ch, start, length);
         
         } else if(obywatelstwo){
             textContent.append(ch, start, length);
@@ -610,7 +698,8 @@ public class MyHandler extends DefaultHandler{
     private final FileWriter outSFirma;
     private final FileWriter outSUprawnienie;
     private final FileWriter outSOddzial;
-    
+    private final FileWriter outExAddress;
+
     //zmienne znaczników kategorii
     private boolean danePodstawowe = false;
     private boolean daneKontaktowe = false;
@@ -620,6 +709,7 @@ public class MyHandler extends DefaultHandler{
     private boolean uprawnieniaKategoria = false;
     private boolean adresyDodatkoweGrupa = false;
     private boolean adresDodatkowy = false;
+    private boolean adresDoDoreczen = false;
     
     //tymczasowe zmienne dla przechowywania danych wpisu
     private String identyfikatorWpisuTemp = "";
@@ -654,6 +744,11 @@ public class MyHandler extends DefaultHandler{
     private boolean poczta = false;
     private boolean powiat = false;
     private boolean wojewodztwo = false;
+    private boolean dMiejscowosc = false;
+    private boolean dUlica = false;
+    private boolean dBudynek = false;
+    private boolean dKodPocztowy = false;
+    private boolean dPoczta = false;
     private boolean obywatelstwo = false;
     private boolean dataRozpoczecia = false;
     private boolean dataZawieszenia = false;
