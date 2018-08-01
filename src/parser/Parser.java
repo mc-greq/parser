@@ -131,12 +131,14 @@ public class Parser {
         
     }
 
+
+
     public static final FilenameFilter FILTR_XML = new FilenameFilter() {
 
         @Override
         public boolean accept(File dir, String name) {
             String lowercaseName = name.toLowerCase();
-            return lowercaseName.endsWith(".xml") && lowercaseName.startsWith("calosc_");
+            return lowercaseName.endsWith(".xml");
         }
     };
     
@@ -145,7 +147,7 @@ public class Parser {
 		@Override
 		public boolean accept(File dir, String name) {
 			 String lowercaseName = name.toLowerCase();
-             return lowercaseName.endsWith(".zip") && lowercaseName.startsWith("calosc_");
+             return lowercaseName.endsWith(".zip");
 		}
     };
 }
