@@ -2,16 +2,16 @@ package parser;
 
 public class Oddzial {
 	
-	public void setTerc(String terc) {
-		this.terc = terc.replace("|", " ");
+	public void setTerytTerc(String terytTerc) {
+		this.terytTerc = terytTerc.replace("|", " ");
 	}
 	
-	public void setSimc(String simc) {
-		this.simc = simc.replace("|", " ");
+	public void setTerytSimc(String terytSimc) {
+		this.terytSimc = terytSimc.replace("|", " ");
 	}
 	
-	public void setUlic(String ulic) {
-		this.ulic = ulic.replace("|", " ");
+	public void setTerytUlic(String terytUlic) {
+		this.terytUlic = terytUlic.replace("|", " ");
 	}
 	
 	public void setId(String id) {
@@ -61,9 +61,9 @@ public class Oddzial {
 	@Override
 	public String toString() {
 		return this.identyfikator + "|" +
-				this.terc + "|" +
-				this.simc + "|" +
-				this.ulic + "|" +
+				this.terytTerc + "|" +
+				this.terytSimc + "|" +
+				this.terytUlic + "|" +
 				this.miejscowosc + "|" +
 				this.ulica + "|" +
 				this.budynek + "|" +
@@ -76,9 +76,9 @@ public class Oddzial {
 				this.opis;
 	}
 	
-	private String terc = "";
-	private String simc = "";
-	private String ulic = "";
+	private String terytTerc = "";
+	private String terytSimc = "";
+	private String terytUlic = "";
 	private String identyfikator = "";
 	private String miejscowosc = "";
 	private String ulica = "";

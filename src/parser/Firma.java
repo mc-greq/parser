@@ -45,7 +45,19 @@ public class Firma {
     public void setWww(String www){
         this.adresStronyInternetowej = www.replace("|", "");
     }
-    
+
+    public void setTerytTerc(String terytTerc) {
+        this.terytTerc = terytTerc;
+    }
+
+    public void setTerytSimc(String terytSimc) {
+        this.terytSimc = terytSimc;
+    }
+
+    public void setTerytUlic(String terytUlic) {
+        this.terytUlic = terytUlic;
+    }
+
     public void setMiejscowosc(String miejscowosc){
         this.miejscowosc = miejscowosc.replace("|", "");
     }
@@ -78,6 +90,30 @@ public class Firma {
         this.wojewodztwo = wojewodztwo.replace("|", "");
     }
 
+    public void setdTerytTerc(String dTerytTerc) {
+        this.dTerytTerc = dTerytTerc;
+    }
+
+    public void setdTerytSimc(String dTerytSimc) {
+        this.dTerytSimc = dTerytSimc;
+    }
+
+    public void setdTerytUlic(String dTerytUlic) {
+        this.dTerytUlic = dTerytUlic;
+    }
+
+    public void setdWojewodztwo(String dWojewodztwo) {
+        this.dWojewodztwo = dWojewodztwo;
+    }
+
+    public void setdGmina(String dGmina) {
+        this.dGmina = dGmina;
+    }
+
+    public void setdPowiat(String dPowiat) {
+        this.dPowiat = dPowiat;
+    }
+
     public void setdMiejscowosc(String dMiejscowosc) {
         this.dMiejscowosc = dMiejscowosc;
     }
@@ -88,6 +124,10 @@ public class Firma {
 
     public void setdBudynek(String dBudynek) {
         this.dBudynek = dBudynek;
+    }
+    
+    public void setdLokal(String dLokal) {
+        this.dLokal = dLokal;
     }
 
     public void setdKodPocztowy(String dKodPocztowy) {
@@ -141,6 +181,12 @@ public class Firma {
         return in;
     }*/
 
+    public String terytToString(){
+        return this.identyfikatorWpisu + "|" +
+                this.terytTerc + "|" +
+                this.terytSimc + "|" +
+                this.terytUlic + "|";
+    }
 
     public String toString(Boolean firma){
         if(firma) {
@@ -190,9 +236,16 @@ public class Firma {
                     this.poczta + "|" +
                     this.powiat + "|" +
                     this.wojewodztwo + "|" +
+                    this.dTerytTerc + "|" +
+                    this.dTerytSimc + "|" +
+                    this.dTerytUlic + "|" +
+                    this.dWojewodztwo + "|" +
+                    this.dPowiat + "|" +
+                    this.dGmina + "|" +
                     this.dMiejscowosc + "|" +
                     this.dUlica + "|" +
                     this.dBudynek + "|" +
+                    this.dLokal + "|" +
                     this.dKodPocztowy + "|" +
                     this.dPoczta + "|" +
                     this.obywatelstwo + "|" +
@@ -217,6 +270,9 @@ public class Firma {
     private String faks= "";
     private String adresPocztyElektronicznej= "";
     private String adresStronyInternetowej= "";
+    private String terytTerc = "";
+    private String terytSimc = "";
+    private String terytUlic = "";
     private String miejscowosc= "";
     private String ulica= "";
     private String budynek= "";
@@ -225,9 +281,16 @@ public class Firma {
     private String poczta= "";
     private String powiat= "";
     private String wojewodztwo= "";
+    private String dTerytTerc = "";
+    private String dTerytSimc = "";
+    private String dTerytUlic = "";
+    private String dWojewodztwo = "";
+    private String dGmina = "";
+    private String dPowiat = "";
     private String dMiejscowosc = "";
     private String dUlica = "";
     private String dBudynek = "";
+    private String dLokal = "";
     private String dKodPocztowy = "";
     private String dPoczta = "";
     private String obywatelstwo= "";

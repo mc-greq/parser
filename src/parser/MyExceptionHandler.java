@@ -13,26 +13,26 @@ public class MyExceptionHandler{
 		try {
 			if(plikLogowania.exists()) {
 				FileWriter log = new FileWriter(plikLogowania, true);
-				log.append(new GregorianCalendar().getTime() + System.getProperty("line.separator")
-						+ ex.getMessage() + System.getProperty("line.separator")
-						+ "---------------------------------" + System.getProperty("line.separator"));
+				log.append(new GregorianCalendar().getTime() + Parser.lineSeparator
+						+ ex.getMessage() + Parser.lineSeparator
+						+ "---------------------------------" + Parser.lineSeparator);
 				log.close();
-				System.out.println(System.getProperty("line.separator") + new GregorianCalendar().getTime() + System.getProperty("line.separator")
-						+ ex.getMessage() + System.getProperty("line.separator"));
+				System.out.println(Parser.lineSeparator + new GregorianCalendar().getTime() + Parser.lineSeparator
+						+ ex.getMessage() + Parser.lineSeparator);
 			}else {
 				FileWriter log = new FileWriter(plikLogowania);
-				log.write(new GregorianCalendar().getTime() + System.getProperty("line.separator")
-						+ ex.getMessage() + System.getProperty("line.separator")
-						+ "---------------------------------" + System.getProperty("line.separator"));
+				log.write(new GregorianCalendar().getTime() + Parser.lineSeparator
+						+ ex.getMessage() + Parser.lineSeparator
+						+ "---------------------------------" + Parser.lineSeparator);
 				log.close();
-				System.out.println(System.getProperty("line.separator") + new GregorianCalendar().getTime() + System.getProperty("line.separator")
-						+ ex.getMessage() + System.getProperty("line.separator"));
+				System.out.println(Parser.lineSeparator + new GregorianCalendar().getTime() + Parser.lineSeparator
+						+ ex.getMessage() + Parser.lineSeparator);
 			}
 			
 			System.out.println("Błąd, przerwano - zapis błędu w pliku log.txt");
 			
 		} catch(IOException ee) {
-                        System.out.println("Błąd dostępu do pliku logowania" + System.getProperty("line.separator") + ee.getMessage());
+                        System.out.println("Błąd dostępu do pliku logowania" + Parser.lineSeparator + ee.getMessage());
 		} 
 
 	}

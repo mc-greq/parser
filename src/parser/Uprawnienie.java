@@ -28,14 +28,10 @@ public class Uprawnienie {
     
     @Override
     public String toString(){
-        return  this.identyfikatorWpisu + "|" +
+        return  Parser.cleanString(this.identyfikatorWpisu + "|" +
                 this.nip + "|" +
                 this.regon + "|" +
-                this.uprawnienie + "|"
-                        .replace("\n", " ")
-                        .replace("\r", " ")
-                        .replace("\t", " ")
-                        .replace("  ", " ");
+                this.uprawnienie + "|");
  
     }
 

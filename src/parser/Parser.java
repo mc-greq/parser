@@ -19,9 +19,26 @@ import org.xml.sax.SAXException;
 
 public class Parser {
 
+//    public static final FilenameFilter FILTR_NO_ADDRESS_XML = (dir, name) -> {
+//        String lowercaseName = name.toLowerCase();
+//        return lowercaseName.equals("calosc_ExtendedAddress_.xml");
+//    };
+
+    public static final FilenameFilter FILTR_XML = (dir, name) -> {
+        String lowercaseName = name.toLowerCase();
+        return lowercaseName.endsWith(".xml");
+    };
+
+    public static final FilenameFilter FILTR_ZIP = (dir, name) -> {
+        String lowercaseName = name.toLowerCase();
+        return lowercaseName.endsWith(".zip");
+    };
+
+    public static final String lineSeparator = System.getProperty("line.separator");
+
     public static void main(String[] args){
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-        Boolean testExAddress = false;
+        boolean testExAddress = false;
         
         File folderXml = new File(System.getProperty("user.dir") + "/XML/");
         File folderZip = new File(System.getProperty("user.dir"));
@@ -34,102 +51,28 @@ public class Parser {
             
             SAXParser saxParser = saxParserFactory.newSAXParser();
             
-            //otwieram strumień zapisu dla firm
+            // otwieram strumień zapisu dla firm
             FileWriter outSFirma = new FileWriter("nowy.txt");
-            //otwieram strumień zapisu dla uprawnień
+            // otwieram strumień zapisu dla uprawnień
             FileWriter outSUprawnienie = new FileWriter("uprawnienia.txt");
-            //otwieram strumien zapisu dla oddziałów
+            // otwieram strumien zapisu dla oddziałów
             FileWriter outSOddzial = new FileWriter("oddzialy.txt");
-            //otwieram strumien zapisu dla firm bez adresu calosc_calosc_ExtendedAddress_.xml
+            // otwieram strumien zapisu dla firm bez adresu calosc_calosc_ExtendedAddress_.xml
             FileWriter outExAddress = new FileWriter("no_address.txt");
+            // otwieram strumiem zapisu kodów teryt do pliku
+            FileWriter outTertyt = new FileWriter("teryt.txt");
             
-            //drukuję strukturę pliku dla Firm - tworzyć tutaj czy we własnej klasie strumień?
-            outSFirma.write("IdentyfikatorWpisu|"
-                        + "pImie|"
-                        + "pNazwisko|"
-                        + "pNip|"
-                        + "pREGON|"
-                        + "pFirma|"
-                        + "Telefon|"
-                        + "Faks|"
-                        + "AdresPocztyElektronicznej|"
-                        + "AdresStronyInternetowej|"
-                        + "gMiejscowosc|"
-                        + "gUlica|"
-                        + "gBudynek|"
-                        + "gLokal|"
-                        + "gKodPocztowy|"
-                        + "gPoczta|"
-                        + "gPowiat|"
-                        + "gWojewodztwo|"
-                        + "PrzedsiebiorcaPosiadaObywatelstwaPanstw|"
-                        + "DataRozpoczeciaWykonywaniaDzialalnosciGospodarczej|"
-                        + "DataZawieszeniaWykonywaniaDzialalnosciGospodarczej|"
-                        + "DataWznowieniaWykonywaniaDzialalnosciGospodarczej|"
-                        + "DataZaprzestaniaWykonywaniaDzialalnosciGospodarczej|"
-                        + "DataWykresleniaWpisuZRejestru|"
-                        + "MalzenskaWspolnoscMajatkowa|"
-                        + "Status|"
-                        + "KodyPKD"
-                        + System.getProperty("line.separator"));
+            //drukuję nagłówki pliku dla Firm
+            writeFirmaHeaders(outSFirma);
 
-            outExAddress.write("IdentyfikatorWpisu|"
-                    + "pImie|"
-                    + "pNazwisko|"
-                    + "pNip|"
-                    + "pREGON|"
-                    + "pFirma|"
-                    + "Telefon|"
-                    + "Faks|"
-                    + "AdresPocztyElektronicznej|"
-                    + "AdresStronyInternetowej|"
-                    + "gMiejscowosc|"
-                    + "gUlica|"
-                    + "gBudynek|"
-                    + "gLokal|"
-                    + "gKodPocztowy|"
-                    + "gPoczta|"
-                    + "gPowiat|"
-                    + "gWojewodztwo|"
-                    + "dMiejscowsc|"
-                    + "dUlica|"
-                    + "dBudynek|"
-                    + "dKodPocztowy|"
-                    + "dPoczta|"
-                    + "PrzedsiebiorcaPosiadaObywatelstwaPanstw|"
-                    + "DataRozpoczeciaWykonywaniaDzialalnosciGospodarczej|"
-                    + "DataZawieszeniaWykonywaniaDzialalnosciGospodarczej|"
-                    + "DataWznowieniaWykonywaniaDzialalnosciGospodarczej|"
-                    + "DataZaprzestaniaWykonywaniaDzialalnosciGospodarczej|"
-                    + "DataWykresleniaWpisuZRejestru|"
-                    + "MalzenskaWspolnoscMajatkowa|"
-                    + "Status|"
-                    + "KodyPKD"
-                    + System.getProperty("line.separator"));
+            // drukuję nagłówki pliku NoAddress
+            writeNoAddressHeaders(outExAddress);
             
-            //drukuję strukturę pliku dla uprawnień
-            outSUprawnienie.write("IdentyfikatorWpisu|"
-                                + "pNip|"
-                                + "pREGON|"
-                                + "WARTOSC"
-                                + System.getProperty("line.separator"));
+            // drukuję nagłówki pliku dla uprawnień
+            writeUprawnieniaHeaders(outSUprawnienie);
             
-            //drukuję strukturę pliku dla oddziałów
-            outSOddzial.write("IdentyfikatorWpisu|"
-            				+ "TERC|"
-            				+ "SIMC|"
-            				+ "ULIC|"
-            				+ "Miejscowosc|"
-            				+ "Ulica|"
-            				+ "Budynek|"
-            				+ "Lokal|"
-            				+ "KodPocztowy|"
-            				+ "Poczta|"
-            				+ "Powiat|"
-            				+ "Gmina|"
-            				+ "Wojewodztwo|"
-            				+ "OpisNietypowegoMiejscaLokalizacji"
-            				+ System.getProperty("line.separator"));
+            // drukuję nagłówki pliku dla oddziałów
+            writeOddzialHeaders(outSOddzial);
             
             //tworzę obiekt handlera i przesyłam do konstruktora strumienie zapisu
 //            MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial);
@@ -145,11 +88,11 @@ public class Parser {
                 for (File plik : listaPlikow) {
                     System.out.println(plik);
                     if(plik.getName().equals("calosc_ExtendedAddress_.xml")) {
-                        MyHandler handler = new MyHandler(null, outSUprawnienie, outSOddzial,outExAddress);
+                        MyHandler handler = new MyHandler(null, outSUprawnienie, outSOddzial,outExAddress, outTertyt);
                         saxParser.parse(plik, handler);
                         testExAddress = true;
                     } else {
-                        MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial,null);
+                        MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial,null, outTertyt);
                         saxParser.parse(plik, handler);
                     }
                 }
@@ -158,46 +101,126 @@ public class Parser {
                     Files.deleteIfExists(new File("no_address.txt").toPath());
                 }
             }
-
-            //odpalam parsowanie przy pomocy handlera
-            //saxParser.parse(new File(System.getProperty("user.dir") + File.separator + "test.xml"), handler);
-            
-            //Get Employees list
-            //List<Firma> listaFirm = handler.getListaFirm();
             
             //zamykam strumienie zapisu
             outSFirma.close();
             outSUprawnienie.close();
             outSOddzial.close();
             outExAddress.close();
-            
-            //print employee information
-            //for(Firma emp : listaFirm)
-                //System.out.println(emp);
-            //System.out.println(i);
+            outTertyt.close();
+
         } catch (ParserConfigurationException | SAXException | IOException e) {
             new MyExceptionHandler(e);
         }
         
     }
 
-    public static final FilenameFilter FILTR_NO_ADDRESS_XML = (dir, name) -> {
-        String lowercaseName = name.toLowerCase();
-        return lowercaseName.equals("calosc_ExtendedAddress_.xml");
-    };
+    public static void writeFirmaHeaders(FileWriter writer) throws IOException{
+        writer.write("IdentyfikatorWpisu|"
+                + "pImie|"
+                + "pNazwisko|"
+                + "pNip|"
+                + "pREGON|"
+                + "pFirma|"
+                + "Telefon|"
+                + "Faks|"
+                + "AdresPocztyElektronicznej|"
+                + "AdresStronyInternetowej|"
+                + "gMiejscowosc|"
+                + "gUlica|"
+                + "gBudynek|"
+                + "gLokal|"
+                + "gKodPocztowy|"
+                + "gPoczta|"
+                + "gPowiat|"
+                + "gWojewodztwo|"
+                + "PrzedsiebiorcaPosiadaObywatelstwaPanstw|"
+                + "DataRozpoczeciaWykonywaniaDzialalnosciGospodarczej|"
+                + "DataZawieszeniaWykonywaniaDzialalnosciGospodarczej|"
+                + "DataWznowieniaWykonywaniaDzialalnosciGospodarczej|"
+                + "DataZaprzestaniaWykonywaniaDzialalnosciGospodarczej|"
+                + "DataWykresleniaWpisuZRejestru|"
+                + "MalzenskaWspolnoscMajatkowa|"
+                + "Status|"
+                + "KodyPKD"
+                + lineSeparator);
+    }
 
-    public static final FilenameFilter FILTR_XML = (dir, name) -> {
-        String lowercaseName = name.toLowerCase();
-        return lowercaseName.endsWith(".xml");
-    };
-    
-    public static final FilenameFilter FILTR_ZIP = new FilenameFilter() {
+    public static void writeNoAddressHeaders(FileWriter writer) throws IOException{
+        writer.write("IdentyfikatorWpisu|"
+                + "pImie|"
+                + "pNazwisko|"
+                + "pNip|"
+                + "pREGON|"
+                + "pFirma|"
+                + "Telefon|"
+                + "Faks|"
+                + "AdresPocztyElektronicznej|"
+                + "AdresStronyInternetowej|"
+                + "gMiejscowosc|"
+                + "gUlica|"
+                + "gBudynek|"
+                + "gLokal|"
+                + "gKodPocztowy|"
+                + "gPoczta|"
+                + "gPowiat|"
+                + "gWojewodztwo|"
+                + "dTERC|"
+                + "dSIMC|"
+                + "dULIC|"
+                + "dWojewodztwo|"
+                + "dPowiat|"
+                + "dGmina|"
+                + "dMiejscowsc|"
+                + "dUlica|"
+                + "dBudynek|"
+                + "dLokal|"
+                + "dKodPocztowy|"
+                + "dPoczta|"
+                + "PrzedsiebiorcaPosiadaObywatelstwaPanstw|"
+                + "DataRozpoczeciaWykonywaniaDzialalnosciGospodarczej|"
+                + "DataZawieszeniaWykonywaniaDzialalnosciGospodarczej|"
+                + "DataWznowieniaWykonywaniaDzialalnosciGospodarczej|"
+                + "DataZaprzestaniaWykonywaniaDzialalnosciGospodarczej|"
+                + "DataWykresleniaWpisuZRejestru|"
+                + "MalzenskaWspolnoscMajatkowa|"
+                + "Status|"
+                + "KodyPKD"
+                + lineSeparator);
+    }
 
-		@Override
-		public boolean accept(File dir, String name) {
-			 String lowercaseName = name.toLowerCase();
-             return lowercaseName.endsWith(".zip");
-		}
-    };
+    public static void writeUprawnieniaHeaders(FileWriter writer) throws IOException{
+        writer.write("IdentyfikatorWpisu|"
+                + "pNip|"
+                + "pREGON|"
+                + "WARTOSC"
+                + lineSeparator);
+    }
+
+    public static void writeOddzialHeaders(FileWriter writer) throws IOException{
+        writer.write("IdentyfikatorWpisu|"
+                + "TERC|"
+                + "SIMC|"
+                + "ULIC|"
+                + "Miejscowosc|"
+                + "Ulica|"
+                + "Budynek|"
+                + "Lokal|"
+                + "KodPocztowy|"
+                + "Poczta|"
+                + "Powiat|"
+                + "Gmina|"
+                + "Wojewodztwo|"
+                + "OpisNietypowegoMiejscaLokalizacji"
+                + lineSeparator);
+    }
+
+    // czyszczenie strinow ze wszystkich znaków końca linii, mogą zepsuć strukturę pliku
+    public static String cleanString(String input){
+        return input.replace("\n", " ")
+                .replace("\r", " ")
+                .replace("\t", " ")
+                .replace("  ", " ");
+    }
 }
 

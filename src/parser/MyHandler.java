@@ -11,20 +11,13 @@ public class MyHandler extends DefaultHandler{
     
     //własny konstruktor wywołujący konstruktor nadrzędny i dodatkowo przyjmujący strumienie do zapisu pliku
     //sprawdzamy który plik ma byc zapisywany - plik główny ze strumienia outSFirma czy plik bez danych adresowych outExAddress
-    public MyHandler(FileWriter outSFirma, FileWriter outSUprawnienie, FileWriter outSOddzial, FileWriter outExAddress){
+    public MyHandler(FileWriter outSFirma, FileWriter outSUprawnienie, FileWriter outSOddzial, FileWriter outExAddress, FileWriter outTeryt){
         super();
-        if(outSFirma != null) {
-            this.outSFirma = outSFirma;
-        } else {
-            this.outSFirma = null;
-        }
+        this.outSFirma = outSFirma;
         this.outSUprawnienie = outSUprawnienie;
         this.outSOddzial = outSOddzial;
-        if(outExAddress != null){
-            this.outExAddress = outExAddress;
-        } else {
-            this.outExAddress = null;
-        }
+        this.outExAddress = outExAddress;
+        this.outTeryt = outTeryt;
     }
     
     //private List<Firma> listaFirm = null;
@@ -96,9 +89,18 @@ public class MyHandler extends DefaultHandler{
          * flagi oznaczające adresy. Mamy tam jeszcze inne typy adresów jak na przykład adres korespondencyjny.
          * 
          */
-        } else if (qName.equalsIgnoreCase("AdresGlownegoMiejscaWykonywaniaDzialalnosci") && daneAdresowe){
+        } else if (qName.equalsIgnoreCase("AdresGlownegoMiejscaWykonywaniaDzialalnosci") && daneAdresowe) {
             adresGlowny = true;
-        
+
+        } else if (qName.equalsIgnoreCase("TERC") && adresGlowny){
+            terytTerc = true;
+
+        } else if (qName.equalsIgnoreCase("SIMC") && adresGlowny){
+            terytSimc = true;
+
+        } else if (qName.equalsIgnoreCase("ULIC") && adresGlowny){
+            terytUlic = true;
+
         } else if (qName.equalsIgnoreCase("Miejscowosc") && adresGlowny){
             miejscowosc = true;
         
@@ -126,6 +128,24 @@ public class MyHandler extends DefaultHandler{
         } else if (qName.equalsIgnoreCase("AdresDoDoreczen") && daneAdresowe && outExAddress != null) {
             adresDoDoreczen = true;
 
+        } else if (qName.equalsIgnoreCase("TERC") && adresDoDoreczen) {
+            dTerytTerc = true;
+
+        } else if (qName.equalsIgnoreCase("SIMC") && adresDoDoreczen) {
+            dTerytSimc = true;
+
+        } else if (qName.equalsIgnoreCase("ULIC") && adresDoDoreczen) {
+            dTerytUlic = true;
+
+        } else if (qName.equalsIgnoreCase("Wojewodztwo") && adresDoDoreczen) {
+            dWojewodztwo = true;
+
+        } else if (qName.equalsIgnoreCase("Powiat") && adresDoDoreczen) {
+            dPowiat = true;
+
+        } else if (qName.equalsIgnoreCase("Gmina") && adresDoDoreczen) {
+            dGmina = true;
+
         } else if (qName.equalsIgnoreCase("Miejscowosc") && adresDoDoreczen) {
             dMiejscowosc = true;
 
@@ -134,6 +154,9 @@ public class MyHandler extends DefaultHandler{
 
         } else if (qName.equalsIgnoreCase("Budynek") && adresDoDoreczen) {
             dBudynek = true;
+            
+        } else if (qName.equalsIgnoreCase("Lokal") && adresDoDoreczen) {
+            dLokal = true;
 
         } else if (qName.equalsIgnoreCase("KodPocztowy") && adresDoDoreczen) {
             dKodPocztowy = true;
@@ -190,13 +213,13 @@ public class MyHandler extends DefaultHandler{
         	oddzial.setId(identyfikatorWpisuTemp);
         	
         } else if (qName.equalsIgnoreCase("TERC") && adresDodatkowy){
-            terc = true;
+            terytTerc = true;
             
         } else if (qName.equalsIgnoreCase("SIMC") && adresDodatkowy){
-            simc = true;
+            terytSimc = true;
             
         } else if (qName.equalsIgnoreCase("ULIC") && adresDodatkowy){
-            ulic = true;        
+            terytUlic = true;
         	
         } else if (qName.equalsIgnoreCase("Miejscowosc") && adresDodatkowy){
             miejscowosc = true;
@@ -244,30 +267,23 @@ public class MyHandler extends DefaultHandler{
                 //jeśli trafi na element znaczący koniec rekordu zapisuje ten rekord do pliku przy pomocy przesłanego strumienia
                 //zapisujemy do strumienia głównego pliku
                 if(outSFirma != null) {
-                    outSFirma.write(firma.toString(true)
-                            .replace("\n", " ")
-                            .replace("\r", " ")
-                            .replace("\t", " ")
-                            .replace("  ", " ")
-                            + System.getProperty("line.separator"));
+                    outSFirma.write(Parser.cleanString(firma.toString(true))
+                            + Parser.lineSeparator);
                 //zapisujemy do strumienia pliku bez adresów
                 } else if(outExAddress != null){
-                    outExAddress.write(firma.toString(false)
-                            .replace("\n", " ")
-                            .replace("\r", " ")
-                            .replace("\t", " ")
-                            .replace("  ", " ")
-                            + System.getProperty("line.separator"));
+                    outExAddress.write(Parser.cleanString(firma.toString(false))
+                            + Parser.lineSeparator);
                 }
+
+                //zapis kodów teryt do pliku
+                outTeryt.write(Parser.cleanString(firma.terytToString())
+                        + Parser.lineSeparator);
+
                 //jeśli odnaleziono uprawnienie to jest ono zapisywane do pliku
                 if(!uprawnienieTemp.equals("")){
                     uprawnienie = new Uprawnienie(identyfikatorWpisuTemp, regonTemp, nipTemp, uprawnienieTemp);
-                    outSUprawnienie.write(uprawnienie.toString()
-	                                                    .replace("\n", " ")
-	                                                    .replace("\r", " ")
-	                                                    .replace("\t", " ")
-	                                                    .replace("  ", " ")
-	                                                    + System.getProperty("line.separator"));
+                    outSUprawnienie.write(Parser.cleanString(uprawnienie.toString())
+	                                                    + Parser.lineSeparator);
                 }
                 
             } catch (IOException ex) {
@@ -311,12 +327,8 @@ public class MyHandler extends DefaultHandler{
         	adresDodatkowy = false;
         	
         	try{
-        		outSOddzial.write(oddzial.toString()
-					                        .replace("\n", " ")
-					                        .replace("\r", " ")
-					                        .replace("\t", " ")
-					                        .replace("  ", " ")
-					                        + System.getProperty("line.separator"));// pod koniec adresu czyścimy flagę, oznacza to koniec oddziału, zapisujemy oddział do pliku
+        		outSOddzial.write(Parser.cleanString(oddzial.toString())
+					                        + Parser.lineSeparator);// pod koniec adresu czyścimy flagę, oznacza to koniec oddziału, zapisujemy oddział do pliku
         	} catch(IOException e) {
         		new MyExceptionHandler(e);
         	}
@@ -377,6 +389,21 @@ public class MyHandler extends DefaultHandler{
         /**
          * Początek danych adresowych centrali
          */
+
+        } else if (qName.equalsIgnoreCase("TERC") && terytTerc && adresGlowny){
+            firma.setTerytTerc(textContent.toString());
+            textContent.setLength(0);
+            terytTerc = false;
+
+        } else if (qName.equalsIgnoreCase("SIMC") && terytSimc && adresGlowny){
+            firma.setTerytSimc(textContent.toString());
+            textContent.setLength(0);
+            terytSimc = false;
+
+        } else if (qName.equalsIgnoreCase("ULIC") && terytUlic && adresGlowny){
+            firma.setTerytUlic(textContent.toString());
+            textContent.setLength(0);
+            terytUlic = false;
             
         } else if (qName.equalsIgnoreCase("Miejscowosc") && miejscowosc && adresGlowny){
             firma.setMiejscowosc(textContent.toString());
@@ -424,6 +451,36 @@ public class MyHandler extends DefaultHandler{
          * Początek adresów do doręczeń
          */
 
+        } else if (qName.equalsIgnoreCase("TERC") && dTerytTerc && adresDoDoreczen){
+            firma.setdTerytTerc(textContent.toString());
+            textContent.setLength(0);
+            dTerytTerc = false;
+
+        } else if (qName.equalsIgnoreCase("SIMC") && dTerytSimc && adresDoDoreczen){
+            firma.setdTerytSimc(textContent.toString());
+            textContent.setLength(0);
+            dTerytSimc = false;
+
+        } else if (qName.equalsIgnoreCase("ULIC") && dTerytUlic && adresDoDoreczen){
+            firma.setdTerytUlic(textContent.toString());
+            textContent.setLength(0);
+            dTerytUlic = false;
+
+        } else if (qName.equalsIgnoreCase("Wojewodztwo") && dWojewodztwo && adresDoDoreczen){
+            firma.setdWojewodztwo(textContent.toString());
+            textContent.setLength(0);
+            dWojewodztwo = false;
+
+        } else if (qName.equalsIgnoreCase("Powiat") && dPowiat && adresDoDoreczen){
+            firma.setdPowiat(textContent.toString());
+            textContent.setLength(0);
+            dPowiat = false;
+
+        } else if (qName.equalsIgnoreCase("Gmina") && dGmina && adresDoDoreczen){
+            firma.setdGmina(textContent.toString());
+            textContent.setLength(0);
+            dGmina = false;
+
         } else if (qName.equalsIgnoreCase("Miejscowosc") && dMiejscowosc && adresDoDoreczen){
             firma.setdMiejscowosc(textContent.toString());
             textContent.setLength(0);
@@ -438,6 +495,11 @@ public class MyHandler extends DefaultHandler{
             firma.setdBudynek(textContent.toString());
             textContent.setLength(0);
             dBudynek = false;
+            
+        } else if (qName.equalsIgnoreCase("Lokal") && dLokal && adresDoDoreczen){
+            firma.setdLokal(textContent.toString());
+            textContent.setLength(0);
+            dLokal = false;
 
         } else if (qName.equalsIgnoreCase("KodPocztowy") && dKodPocztowy && adresDoDoreczen){
             firma.setdKodPocztowy(textContent.toString());
@@ -455,20 +517,20 @@ public class MyHandler extends DefaultHandler{
          * Początek danych adresowych oddziału
          */
             
-        } else if(qName.equalsIgnoreCase("TERC") && terc && adresDodatkowy) {
-        	oddzial.setTerc(textContent.toString());
+        } else if(qName.equalsIgnoreCase("TERC") && terytTerc && adresDodatkowy) {
+        	oddzial.setTerytTerc(textContent.toString());
         	textContent.setLength(0);
-        	terc = false;
+        	terytTerc = false;
     	
-        } else if(qName.equalsIgnoreCase("SIMC") && simc && adresDodatkowy) {
-        	oddzial.setSimc(textContent.toString());
+        } else if(qName.equalsIgnoreCase("SIMC") && terytSimc && adresDodatkowy) {
+        	oddzial.setTerytSimc(textContent.toString());
         	textContent.setLength(0);
-        	simc = false;
+        	terytSimc = false;
     	
-        } else if(qName.equalsIgnoreCase("ULIC") && ulic && adresDodatkowy) {
-        	oddzial.setUlic(textContent.toString());
+        } else if(qName.equalsIgnoreCase("ULIC") && terytUlic && adresDodatkowy) {
+        	oddzial.setTerytUlic(textContent.toString());
         	textContent.setLength(0);
-        	ulic = false;
+        	terytUlic = false;
     	
         } else if(qName.equalsIgnoreCase("Miejscowosc") && miejscowosc && adresDodatkowy) {
         	oddzial.setMiejscowosc(textContent.toString());
@@ -635,6 +697,24 @@ public class MyHandler extends DefaultHandler{
         } else if(wojewodztwo){
             textContent.append(ch, start, length);
 
+        } else if(dTerytTerc){
+            textContent.append(ch, start, length);
+
+        } else if(dTerytSimc){
+            textContent.append(ch, start, length);
+
+        } else if(dTerytUlic){
+            textContent.append(ch, start, length);
+
+        } else if(dWojewodztwo){
+            textContent.append(ch, start, length);
+
+        } else if(dPowiat){
+            textContent.append(ch, start, length);
+
+        } else if(dGmina){
+            textContent.append(ch, start, length);
+
         } else if(dMiejscowosc) {
             textContent.append(ch, start, length);
 
@@ -642,6 +722,9 @@ public class MyHandler extends DefaultHandler{
             textContent.append(ch, start, length);
 
         } else if(dBudynek) {
+            textContent.append(ch, start, length);
+            
+        } else if(dLokal) {
             textContent.append(ch, start, length);
 
         } else if(dKodPocztowy) {
@@ -680,13 +763,13 @@ public class MyHandler extends DefaultHandler{
         } else if(uprawnienieTekst){
             textContent.append(ch, start, length);
             
-        } else if(terc){
+        } else if(terytTerc){
             textContent.append(ch, start, length);
             
-        } else if(simc){
+        } else if(terytSimc){
             textContent.append(ch, start, length);
             
-        } else if(ulic){
+        } else if(terytUlic){
             textContent.append(ch, start, length);
             
         } else if(opisLokalizacji){
@@ -699,6 +782,7 @@ public class MyHandler extends DefaultHandler{
     private final FileWriter outSUprawnienie;
     private final FileWriter outSOddzial;
     private final FileWriter outExAddress;
+    private final FileWriter outTeryt;
 
     //zmienne znaczników kategorii
     private boolean danePodstawowe = false;
@@ -721,9 +805,9 @@ public class MyHandler extends DefaultHandler{
     private StringBuilder textContent = new StringBuilder();
     
     //zmienne które są przełączne true-false jeśli trafiono na odpowiedni znacznik
-    private boolean terc = false;
-    private boolean simc = false;
-    private boolean ulic = false;
+    private boolean terytTerc = false;
+    private boolean terytSimc = false;
+    private boolean terytUlic = false;
     private boolean opisLokalizacji = false;
     		
     private boolean identyfikatorWpisu = false;
@@ -744,9 +828,16 @@ public class MyHandler extends DefaultHandler{
     private boolean poczta = false;
     private boolean powiat = false;
     private boolean wojewodztwo = false;
+    private boolean dTerytTerc = false;
+    private boolean dTerytSimc = false;
+    private boolean dTerytUlic = false;
+    private boolean dWojewodztwo = false;
+    private boolean dGmina = false;
+    private boolean dPowiat = false;
     private boolean dMiejscowosc = false;
     private boolean dUlica = false;
     private boolean dBudynek = false;
+    private boolean dLokal = false;
     private boolean dKodPocztowy = false;
     private boolean dPoczta = false;
     private boolean obywatelstwo = false;
