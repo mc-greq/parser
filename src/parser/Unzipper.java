@@ -24,9 +24,9 @@ public class Unzipper {
         
     	File[] listaPlikowZip = folderZip.listFiles(Parser.FILTR_ZIP);
         
-        //czyszcze folder wyjsciowy z plikow xml jeśli zawiera pliki
+        // czyszcze folder wyjsciowy z plikow xml jeśli zawiera pliki
         if(folderWyjsciowy.listFiles(Parser.FILTR_XML) != null){
-            //tworze liste plikow xml, ktore moga byc w folderze wyjsciowym, pobieram filtr z klasy Parser
+            // tworze liste plikow xml, ktore moga byc w folderze wyjsciowym, pobieram filtr z klasy Parser
             File[] listaPlikowXML = folderWyjsciowy.listFiles(Parser.FILTR_XML);
             for(File plik: listaPlikowXML)
                 Files.deleteIfExists(plik.toPath());
@@ -55,12 +55,12 @@ public class Unzipper {
     	
     	byte[] buffer = new byte[1024];
     	
-		//utwórz folder jeśli nie istnieje
+		// utwórz folder jeśli nie istnieje
 		if(!folderWyjsciowy.exists()) {
 			folderWyjsciowy.mkdir();
 		}
 		
-		//pobierz plik do zipowania
+		// pobierz plik do zipowania
 		ZipInputStream zipInS = new ZipInputStream(new FileInputStream(plikZipLokacja), Charset.forName("Cp775"));
 		ZipEntry zipEntry = zipInS.getNextEntry();
 		
@@ -71,12 +71,12 @@ public class Unzipper {
 
 			File newFile = new File(folderWyjsciowyLokacja + File.separator + zipEntryNazwa);
 			
-			//if(newFile.exists())
+			// if(newFile.exists())
 			//	newFile.delete();
 			
 			System.out.println("rozpakowywany xml: " + newFile.getAbsoluteFile());
 			
-			//stworz nieistniejące foldery, nie powinno ich być w ceidg ale zabezpieczamy się
+			// stworz nieistniejące foldery, nie powinno ich być w ceidg ale zabezpieczamy się
 			new File(newFile.getParent()).mkdirs();
 			
 			FileOutputStream fOs = new FileOutputStream(newFile);

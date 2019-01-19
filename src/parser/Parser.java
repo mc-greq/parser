@@ -102,7 +102,7 @@ public class Parser {
                 }
             }
             
-            //zamykam strumienie zapisu
+            // zamykam strumienie zapisu
             outSFirma.close();
             outSUprawnienie.close();
             outSOddzial.close();

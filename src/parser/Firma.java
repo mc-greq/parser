@@ -189,25 +189,26 @@ public class Firma {
     }
 
     public String toString(Boolean firma){
+        String danePodstawowe = this.identyfikatorWpisu + "|" +
+                this.imie + "|" +
+                this.nazwisko + "|" +
+                this.nip + "|" +
+                this.regon + "|" +
+                this.nazwaFirmy + "|" +
+                this.telefon + "|" +
+                this.faks + "|" +
+                this.adresPocztyElektronicznej + "|" +
+                this.adresStronyInternetowej + "|" +
+                this.miejscowosc + "|" +
+                this.ulica + "|" +
+                this.budynek + "|" +
+                this.lokal + "|" +
+                this.kodPocztowy + "|" +
+                this.poczta + "|" +
+                this.powiat + "|" +
+                this.wojewodztwo + "|";
         if(firma) {
-            return this.identyfikatorWpisu + "|" +
-                    this.imie + "|" +
-                    this.nazwisko + "|" +
-                    this.nip + "|" +
-                    this.regon + "|" +
-                    this.nazwaFirmy + "|" +
-                    this.telefon + "|" +
-                    this.faks + "|" +
-                    this.adresPocztyElektronicznej + "|" +
-                    this.adresStronyInternetowej + "|" +
-                    this.miejscowosc + "|" +
-                    this.ulica + "|" +
-                    this.budynek + "|" +
-                    this.lokal + "|" +
-                    this.kodPocztowy + "|" +
-                    this.poczta + "|" +
-                    this.powiat + "|" +
-                    this.wojewodztwo + "|" +
+            return danePodstawowe +
                     this.obywatelstwo + "|" +
                     this.dataRozpoczecia + "|" +
                     this.dataZawieszenia + "|" +
@@ -218,24 +219,7 @@ public class Firma {
                     this.status + "|" +
                     this.pkd;
         } else {
-            return this.identyfikatorWpisu + "|" +
-                    this.imie + "|" +
-                    this.nazwisko + "|" +
-                    this.nip + "|" +
-                    this.regon + "|" +
-                    this.nazwaFirmy + "|" +
-                    this.telefon + "|" +
-                    this.faks + "|" +
-                    this.adresPocztyElektronicznej + "|" +
-                    this.adresStronyInternetowej + "|" +
-                    this.miejscowosc + "|" +
-                    this.ulica + "|" +
-                    this.budynek + "|" +
-                    this.lokal + "|" +
-                    this.kodPocztowy + "|" +
-                    this.poczta + "|" +
-                    this.powiat + "|" +
-                    this.wojewodztwo + "|" +
+            return danePodstawowe +
                     this.dTerytTerc + "|" +
                     this.dTerytSimc + "|" +
                     this.dTerytUlic + "|" +
