@@ -215,7 +215,7 @@ public class Parser {
                 + lineSeparator);
     }
 
-    // czyszczenie strinow ze wszystkich znaków końca linii, mogą zepsuć strukturę pliku
+    // czyszczenie strignow ze wszystkich znaków końca linii, mogą zepsuć strukturę pliku
     public static String cleanString(String input){
         return input.replace("\n", " ")
                 .replace("\r", " ")
