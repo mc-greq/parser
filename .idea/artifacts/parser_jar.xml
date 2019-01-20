@@ -1,9 +1,11 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="parser:jar">
+  <artifact name="parser:jar">
     <output-path>$PROJECT_DIR$/classes/artifacts/parser_jar</output-path>
-    <root id="archive" name="parser.jar">
-      <element id="module-output" name="parser" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/dist/parser.jar" path-in-jar="/" />
+    <root id="root">
+      <element id="archive" name="parser.jar">
+        <element id="module-output" name="parser" />
+      </element>
+      <element id="library" level="module" name="parser.jar" module-name="parser" />
     </root>
   </artifact>
 </component>

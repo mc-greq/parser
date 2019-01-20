@@ -34,8 +34,6 @@ public class Parser extends JFrame {
 //        return lowercaseName.equals("calosc_ExtendedAddress_.xml");
 //    };
 
-
-
     public static final FilenameFilter FILTR_XML = (dir, name) -> {
         String lowercaseName = name.toLowerCase();
         return lowercaseName.endsWith(".xml");
@@ -49,7 +47,6 @@ public class Parser extends JFrame {
     public static final String lineSeparator = System.getProperty("line.separator");
 
     // komponenty Swing
-
     private static final FileFilter jfilechooserFilter =
             new FileNameExtensionFilter("Zip", "zip");
 
@@ -59,6 +56,7 @@ public class Parser extends JFrame {
     private JFileChooser fileChooser = new JFileChooser();
     private DefaultListModel<File> listModel = new DefaultListModel<>();
 
+    // typy akcji kliknięcia
     private enum ACTION {
         ADD("Dodaj"),
         DELETE("Usuń"),
@@ -77,173 +75,15 @@ public class Parser extends JFrame {
         }
     }
 
+
+
     public Parser(){
         setComponents();
     }
 
-    public void startParsing(){
-        new Thread(() -> {
-            System.out.println("START");
-            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-            boolean testExAddress = false;
-
-            File folderXml = new File(System.getProperty("user.dir") + "/XML/");
-
-            try {
-
-                // obiekt unzippera do rozpakowania archiwów z plikami xml
-                Unzipper unzipper = new Unzipper();
-                unzipper.unzipList(listModel, folderXml);
-
-                SAXParser saxParser = saxParserFactory.newSAXParser();
-
-                // otwieram strumień zapisu dla firm
-                FileWriter outSFirma = new FileWriter("nowy.txt");
-                // otwieram strumień zapisu dla uprawnień
-                FileWriter outSUprawnienie = new FileWriter("uprawnienia.txt");
-                // otwieram strumien zapisu dla oddziałów
-                FileWriter outSOddzial = new FileWriter("oddzialy.txt");
-                // otwieram strumien zapisu dla firm bez adresu calosc_calosc_ExtendedAddress_.xml
-                FileWriter outExAddress = new FileWriter("no_address.txt");
-                // otwieram strumiem zapisu kodów teryt do pliku
-                FileWriter outTertyt = new FileWriter("teryt.txt");
-
-                //drukuję nagłówki pliku dla Firm
-                writeFirmaHeaders(outSFirma);
-
-                // drukuję nagłówki pliku NoAddress
-                writeNoAddressHeaders(outExAddress);
-
-                // drukuję nagłówki pliku dla uprawnień
-                writeUprawnieniaHeaders(outSUprawnienie);
-
-                // drukuję nagłówki pliku dla oddziałów
-                writeOddzialHeaders(outSOddzial);
-
-                //tworzę obiekt handlera i przesyłam do konstruktora strumienie zapisu
-//            MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial);
-
-                //pobieram pliki XML z folderu
-
-
-                File[] listaPlikow = folderXml.listFiles(FILTR_XML);
-                if(listaPlikow == null) {
-                    System.out.println("Brak plików do pracy, przerwano.");
-                }
-                else {
-                    for (File plik : listaPlikow) {
-                        System.out.println(plik);
-                        if(plik.getName().equals("calosc_ExtendedAddress_.xml")) {
-                            MyHandler handler = new MyHandler(null, outSUprawnienie, outSOddzial,outExAddress, outTertyt);
-                            saxParser.parse(plik, handler);
-                            testExAddress = true;
-                        } else {
-                            MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial,null, outTertyt);
-                            saxParser.parse(plik, handler);
-                        }
-                    }
-
-
-                }
-
-                // zamykam strumienie zapisu
-                outSFirma.close();
-                outSUprawnienie.close();
-                outSOddzial.close();
-                outExAddress.close();
-                outTertyt.close();
-
-                if(!testExAddress){
-                    Files.deleteIfExists(new File("no_address.txt").toPath());
-                }
-
-            } catch (ParserConfigurationException | SAXException | IOException e) {
-                new MyExceptionHandler(e);
-                System.out.println(e.getMessage());
-            }
-        }).start();
-    }
 
     public static void main(String[] args){
-
         new Parser();
-/*
-        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-        boolean testExAddress = false;
-        
-        File folderXml = new File(System.getProperty("user.dir") + "/XML/");
-        File folderZip = new File(System.getProperty("user.dir"));
-
-        try {
-        	
-            // obiekt unzippera do rozpakowania archiwów z plikami xml
-            Unzipper unzipper = new Unzipper();
-            unzipper.unzipList(folderZip, folderXml);
-            
-            SAXParser saxParser = saxParserFactory.newSAXParser();
-            
-            // otwieram strumień zapisu dla firm
-            FileWriter outSFirma = new FileWriter("nowy.txt");
-            // otwieram strumień zapisu dla uprawnień
-            FileWriter outSUprawnienie = new FileWriter("uprawnienia.txt");
-            // otwieram strumien zapisu dla oddziałów
-            FileWriter outSOddzial = new FileWriter("oddzialy.txt");
-            // otwieram strumien zapisu dla firm bez adresu calosc_calosc_ExtendedAddress_.xml
-            FileWriter outExAddress = new FileWriter("no_address.txt");
-            // otwieram strumiem zapisu kodów teryt do pliku
-            FileWriter outTertyt = new FileWriter("teryt.txt");
-            
-            //drukuję nagłówki pliku dla Firm
-            writeFirmaHeaders(outSFirma);
-
-            // drukuję nagłówki pliku NoAddress
-            writeNoAddressHeaders(outExAddress);
-            
-            // drukuję nagłówki pliku dla uprawnień
-            writeUprawnieniaHeaders(outSUprawnienie);
-            
-            // drukuję nagłówki pliku dla oddziałów
-            writeOddzialHeaders(outSOddzial);
-            
-            //tworzę obiekt handlera i przesyłam do konstruktora strumienie zapisu
-//            MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial);
-            
-            //pobieram pliki XML z folderu
-
-
-            File[] listaPlikow = folderXml.listFiles(FILTR_XML);
-            if(listaPlikow == null) {
-            	System.out.println("Brak plików do pracy, przerwano.");
-            }
-            else {
-                for (File plik : listaPlikow) {
-                    System.out.println(plik);
-                    if(plik.getName().equals("calosc_ExtendedAddress_.xml")) {
-                        MyHandler handler = new MyHandler(null, outSUprawnienie, outSOddzial,outExAddress, outTertyt);
-                        saxParser.parse(plik, handler);
-                        testExAddress = true;
-                    } else {
-                        MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial,null, outTertyt);
-                        saxParser.parse(plik, handler);
-                    }
-                }
-
-                if(!testExAddress){
-                    Files.deleteIfExists(new File("no_address.txt").toPath());
-                }
-            }
-            
-            // zamykam strumienie zapisu
-            outSFirma.close();
-            outSUprawnienie.close();
-            outSOddzial.close();
-            outExAddress.close();
-            outTertyt.close();
-
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            new MyExceptionHandler(e);
-        }
-     */
     }
 
     private void setComponents(){
@@ -252,6 +92,7 @@ public class Parser extends JFrame {
         this.setTitle("Parser");
         this.setJMenuBar(menuBar);
 
+        // dodaję do listy wszystkie pliki zip z aktualnego foldera
         List<File> filesList = Arrays.asList(new File(System.getProperty("user.dir")).listFiles(FILTR_ZIP));
         listModel.addAll(filesList);
 
@@ -295,6 +136,7 @@ public class Parser extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(list);
         list.setBorder(BorderFactory.createEtchedBorder());
+        // cellRenderer pozwala wyświetlać tylko nazwę pliku
         list.setCellRenderer(new DefaultListCellRenderer(){
             @Override
             public Component getListCellRendererComponent(
@@ -314,7 +156,7 @@ public class Parser extends JFrame {
 
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
-                        .addComponent(scrollPane, 200, 200, Short.MAX_VALUE)
+                        .addComponent(scrollPane, 300, 350, Short.MAX_VALUE)
                         .addContainerGap(0, Short.MAX_VALUE)
                         .addGroup(
                                 layout.createParallelGroup()
@@ -325,7 +167,7 @@ public class Parser extends JFrame {
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup()
-                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
                         .addGroup(
                                 layout.createSequentialGroup()
                                         .addComponent(buttonAdd)
@@ -337,7 +179,7 @@ public class Parser extends JFrame {
 
         this.getContentPane().setLayout(layout);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-//        this.pack();
+        this.pack();
     }
 
     private class Akcja extends AbstractAction{
@@ -410,6 +252,91 @@ public class Parser extends JFrame {
         }
 
     }
+
+    // uruchomienie parsowania
+    public void startParsing(){
+        new Thread(() -> {
+            System.out.println("START");
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            boolean testExAddress = false;
+
+            File folderXml = new File(System.getProperty("user.dir") + "/XML/");
+
+            try {
+
+                // obiekt unzippera do rozpakowania archiwów z plikami xml
+                Unzipper unzipper = new Unzipper();
+                unzipper.unzipList(listModel, folderXml);
+
+                SAXParser saxParser = saxParserFactory.newSAXParser();
+
+                // otwieram strumień zapisu dla firm
+                FileWriter outSFirma = new FileWriter("nowy.txt");
+                // otwieram strumień zapisu dla uprawnień
+                FileWriter outSUprawnienie = new FileWriter("uprawnienia.txt");
+                // otwieram strumien zapisu dla oddziałów
+                FileWriter outSOddzial = new FileWriter("oddzialy.txt");
+                // otwieram strumien zapisu dla firm bez adresu calosc_calosc_ExtendedAddress_.xml
+                FileWriter outExAddress = new FileWriter("no_address.txt");
+                // otwieram strumiem zapisu kodów teryt do pliku
+                FileWriter outTertyt = new FileWriter("teryt.txt");
+
+                //drukuję nagłówki pliku dla Firm
+                writeFirmaHeaders(outSFirma);
+
+                // drukuję nagłówki pliku NoAddress
+                writeNoAddressHeaders(outExAddress);
+
+                // drukuję nagłówki pliku dla uprawnień
+                writeUprawnieniaHeaders(outSUprawnienie);
+
+                // drukuję nagłówki pliku dla oddziałów
+                writeOddzialHeaders(outSOddzial);
+
+                //tworzę obiekt handlera i przesyłam do konstruktora strumienie zapisu
+//            MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial);
+
+                //pobieram pliki XML z folderu
+
+                File[] listaPlikow = folderXml.listFiles(FILTR_XML);
+                if(listaPlikow == null) {
+                    System.out.println("Brak plików do pracy, przerwano.");
+                }
+                else {
+                    for (File plik : listaPlikow) {
+                        System.out.println(plik);
+                        if(plik.getName().equals("calosc_ExtendedAddress_.xml")) {
+                            MyHandler handler = new MyHandler(null, outSUprawnienie, outSOddzial,outExAddress, outTertyt);
+                            saxParser.parse(plik, handler);
+                            testExAddress = true;
+                        } else {
+                            MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial,null, outTertyt);
+                            saxParser.parse(plik, handler);
+                        }
+                    }
+
+
+                }
+
+                // zamykam strumienie zapisu
+                outSFirma.close();
+                outSUprawnienie.close();
+                outSOddzial.close();
+                outExAddress.close();
+                outTertyt.close();
+
+                if(!testExAddress){
+                    Files.deleteIfExists(new File("no_address.txt").toPath());
+                }
+
+            } catch (ParserConfigurationException | SAXException | IOException e) {
+                new MyExceptionHandler(e);
+                System.out.println(e.getMessage());
+            }
+        }).start();
+    }
+
+    // drukowanie nagłówków generowanych plików
 
     public static void writeFirmaHeaders(FileWriter writer) throws IOException{
         writer.write("IdentyfikatorWpisu|"

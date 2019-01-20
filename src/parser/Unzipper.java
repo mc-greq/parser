@@ -15,7 +15,7 @@ public class Unzipper {
 	/**
      * Rozpakowuję pliki w folderu wejściowego do folderu docelowego
      * 
-     * @param folderZip
+     * @param zipFiles
      * @param folderWyjsciowy
      * @throws java.io.IOException
      */

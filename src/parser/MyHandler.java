@@ -641,7 +641,7 @@ public class MyHandler extends DefaultHandler{
      */
     
     @Override
-    public void characters(char ch[], int start, int length) throws SAXException {
+    public void characters(char[] ch, int start, int length) throws SAXException {
 
         if (identyfikatorWpisu) {
         //characters może być wywołane kilkukrotnie dla jednego elementu stąd konieczne sklejanie, wartość ustawiana jest w endElement

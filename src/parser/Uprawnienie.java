@@ -9,23 +9,6 @@ public class Uprawnienie {
         this.uprawnienie = uprawnienie.replace("|", " ");
     }
     
-    /*
-    public void setIdentyfikator(String identyfikator){
-        this.identyfikatorWpisu = identyfikator;
-    }
-    
-    public void setRegon(String regon){
-        this.regon = regon;
-    }
-    
-    public void setNip(String nip){
-        this.nip = nip;
-    }
-    
-    public void setUprawnienie(String uprawnienie){
-        this.uprawnienie = uprawnienie;
-    }*/
-    
     @Override
     public String toString(){
         return  Parser.cleanString(this.identyfikatorWpisu + "|" +
