@@ -23,8 +23,10 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 public class Parser extends JFrame {
@@ -47,7 +49,7 @@ public class Parser extends JFrame {
     public static final String lineSeparator = System.getProperty("line.separator");
 
     // komponenty Swing
-    private static final FileFilter jfilechooserFilter =
+    private static final FileFilter jFileChooserFilter =
             new FileNameExtensionFilter("Zip", "zip");
 
     private JList<File> list = new JList<>();
@@ -227,7 +229,7 @@ public class Parser extends JFrame {
 
             fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.setFileFilter(jfilechooserFilter);
+            fileChooser.setFileFilter(jFileChooserFilter);
             fileChooser.setMultiSelectionEnabled(true);
 
             int tmp = fileChooser.showDialog(rootPane, "Dodaj");
@@ -257,6 +259,8 @@ public class Parser extends JFrame {
     public void startParsing(){
         new Thread(() -> {
             System.out.println("START");
+
+            long start = System.currentTimeMillis();
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             boolean testExAddress = false;
 
@@ -333,6 +337,9 @@ public class Parser extends JFrame {
                 new MyExceptionHandler(e);
                 System.out.println(e.getMessage());
             }
+            long end = System.currentTimeMillis();
+            DateFormat timeFormat = new SimpleDateFormat("mm:ss:SSS");
+            JOptionPane.showMessageDialog(this, "Parsowanie zakończone: " + timeFormat.format(new Date(end -start)));
         }).start();
     }
 
