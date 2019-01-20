@@ -1,5 +1,6 @@
 package parser;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,20 +20,22 @@ public class Unzipper {
      * @throws java.io.IOException
      */
     
-    public void unzipList(File folderZip, File folderWyjsciowy) throws IOException {
-        
-        
-    	File[] listaPlikowZip = folderZip.listFiles(Parser.FILTR_ZIP);
+    public void unzipList(DefaultListModel<File> zipFiles, File folderWyjsciowy) throws IOException {
+
+
+    	File[] listaPlikowZip;// = folderZip.listFiles(Parser.FILTR_ZIP);
         
         // czyszcze folder wyjsciowy z plikow xml jeśli zawiera pliki
         if(folderWyjsciowy.listFiles(Parser.FILTR_XML) != null){
             // tworze liste plikow xml, ktore moga byc w folderze wyjsciowym, pobieram filtr z klasy Parser
             File[] listaPlikowXML = folderWyjsciowy.listFiles(Parser.FILTR_XML);
-            for(File plik: listaPlikowXML)
-                Files.deleteIfExists(plik.toPath());
+            for(File plik: listaPlikowXML) {
+				Files.deleteIfExists(plik.toPath());
+			}
         }
         
-    	for(File plik: listaPlikowZip) {
+    	for(int i = 0; i < zipFiles.getSize(); i++) {
+    		File plik = zipFiles.get(i);
             System.out.println("rozpakowuję: " + plik.getAbsolutePath());
             unzipIt(plik, folderWyjsciowy);
     	}
