@@ -29,8 +29,10 @@ public class Unzipper {
         if(folderWyjsciowy.listFiles(Parser.FILTR_XML) != null){
             // tworze liste plikow xml, ktore moga byc w folderze wyjsciowym, pobieram filtr z klasy Parser
             File[] listaPlikowXML = folderWyjsciowy.listFiles(Parser.FILTR_XML);
-            for(File plik: listaPlikowXML) {
-				Files.deleteIfExists(plik.toPath());
+            if(listaPlikowXML != null) {
+				for (File plik : listaPlikowXML) {
+					Files.deleteIfExists(plik.toPath());
+				}
 			}
         }
         

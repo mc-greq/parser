@@ -98,6 +98,7 @@ public class Parser extends JFrame {
         List<File> filesList = Arrays.asList(new File(System.getProperty("user.dir")).listFiles(FILTR_ZIP));
         listModel.addAll(filesList);
 
+        // zdefiniowanie akcji dla przycisków
         Action actionAdd = new Akcja(
                 ACTION.ADD,
                 "Dodaj plik do listy",
@@ -118,6 +119,7 @@ public class Parser extends JFrame {
                 "Zamknij program",
                 "alt F4");
 
+        // przyciski skonstruowane z powyższymi akcjami
         JButton buttonAdd = new JButton(actionAdd);
         JButton buttonDelete = new JButton(actionDelete);
         JButton buttonStart = new JButton(actionStart);
