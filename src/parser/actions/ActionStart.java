@@ -1,10 +1,8 @@
 package parser.actions;
 
 import org.xml.sax.SAXException;
-import parser.MyExceptionHandler;
-import parser.MyHandler;
-import parser.Parser;
-import parser.Unzipper;
+import org.xml.sax.helpers.DefaultHandler;
+import parser.*;
 
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
@@ -88,11 +86,11 @@ public class ActionStart extends AbstractAction {
                     for (File plik : listaPlikow) {
                         System.out.println(plik);
                         if(plik.getName().equals("calosc_ExtendedAddress_.xml")) {
-                            MyHandler handler = new MyHandler(null, outSUprawnienie, outSOddzial,outExAddress, outTertyt);
+                            DefaultHandler handler = new MyHandler(null, outSUprawnienie, outSOddzial,outExAddress, outTertyt);
                             saxParser.parse(plik, handler);
                             testExAddress = true;
                         } else {
-                            MyHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial,null, outTertyt);
+                            DefaultHandler handler = new MyHandler(outSFirma, outSUprawnienie, outSOddzial,null, outTertyt);
                             saxParser.parse(plik, handler);
                         }
                     }

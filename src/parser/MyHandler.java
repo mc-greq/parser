@@ -49,7 +49,7 @@ public class MyHandler extends DefaultHandler{
             
         } else if (qName.equalsIgnoreCase("DanePodstawowe")){ // flaga danych podstawowych 
             danePodstawowe = true;
-            
+
         } else if (qName.equalsIgnoreCase("Imie") && danePodstawowe){ // flaga imię
             imie = true;
             
@@ -63,7 +63,7 @@ public class MyHandler extends DefaultHandler{
             regon = true;
             
         } else if (qName.equalsIgnoreCase("Firma") && danePodstawowe){
-            nazwaFirmy = true; 
+            nazwaFirmy = true;
             
         } else if (qName.equalsIgnoreCase("DaneKontaktowe")){
             daneKontaktowe = true;
@@ -247,8 +247,10 @@ public class MyHandler extends DefaultHandler{
         
         } else if (qName.equalsIgnoreCase("OpisNietypowegoMiejscaLokalizacji") && adresDodatkowy){
             opisLokalizacji = true;
-        
         }
+
+        // ustawia zmienną do drukowania zawartości do pliku
+        drukuj = doPrinting();
         
     }
     
@@ -333,7 +335,7 @@ public class MyHandler extends DefaultHandler{
         		new MyExceptionHandler(e);
         	}
             
-        } else if (qName.equalsIgnoreCase("IdentyfikatorWpisu")){
+        } else if (qName.equalsIgnoreCase("IdentyfikatorWpisu") && identyfikatorWpisu){
             firma.setIdentyfikator(textContent.toString());
             identyfikatorWpisuTemp = textContent.toString();
             textContent.setLength(0);
@@ -631,6 +633,9 @@ public class MyHandler extends DefaultHandler{
             textContent.setLength(0);
             uprawnienieTekst = false;
         }
+
+        drukuj = false;
+
     }
     
     /**
@@ -643,140 +648,61 @@ public class MyHandler extends DefaultHandler{
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
 
-        if (identyfikatorWpisu) {
-        //characters może być wywołane kilkukrotnie dla jednego elementu stąd konieczne sklejanie, wartość ustawiana jest w endElement
-            textContent.append(ch, start, length);
-        } else if (imie) {
-            textContent.append(ch, start, length);
-            
-        } else if (nazwisko) {
-            textContent.append(ch, start, length);
-            
-        } else if (nip){
-            textContent.append(ch, start, length);
-            
-        } else if (regon){
-            textContent.append(ch, start, length);
-            
-        } else if(nazwaFirmy){
-            textContent.append(ch, start, length);
-            
-        } else if(adresPocztyElektronicznej){
-            textContent.append(ch, start, length);
-
-        } else if(adresStronyInternetowej){
-            textContent.append(ch, start, length);
-
-        } else if(telefon){
-            textContent.append(ch, start, length);
-        
-        } else if(faks){
-            textContent.append(ch, start, length);
-        
-        } else if(miejscowosc){
-            textContent.append(ch, start, length);
-        
-        } else if(ulica){
-            textContent.append(ch, start, length);
-        
-        } else if(budynek){
-            textContent.append(ch, start, length);
-        
-        } else if(lokal){
-            textContent.append(ch, start, length);
-        
-        } else if(kodPocztowy){
-            textContent.append(ch, start, length);
-        
-        } else if(poczta){
-            textContent.append(ch, start, length);
-        
-        } else if(powiat){
-            textContent.append(ch, start, length);
-        
-        } else if(wojewodztwo){
-            textContent.append(ch, start, length);
-
-        } else if(dTerytTerc){
-            textContent.append(ch, start, length);
-
-        } else if(dTerytSimc){
-            textContent.append(ch, start, length);
-
-        } else if(dTerytUlic){
-            textContent.append(ch, start, length);
-
-        } else if(dWojewodztwo){
-            textContent.append(ch, start, length);
-
-        } else if(dPowiat){
-            textContent.append(ch, start, length);
-
-        } else if(dGmina){
-            textContent.append(ch, start, length);
-
-        } else if(dMiejscowosc) {
-            textContent.append(ch, start, length);
-
-        } else if(dUlica) {
-            textContent.append(ch, start, length);
-
-        } else if(dBudynek) {
-            textContent.append(ch, start, length);
-            
-        } else if(dLokal) {
-            textContent.append(ch, start, length);
-
-        } else if(dKodPocztowy) {
-            textContent.append(ch, start, length);
-
-        } else if(dPoczta){
-            textContent.append(ch, start, length);
-        
-        } else if(obywatelstwo){
-            textContent.append(ch, start, length);
-        
-        } else if(dataRozpoczecia){
-            textContent.append(ch, start, length);
-        
-        } else if(dataZawieszenia){
-            textContent.append(ch, start, length);
-        
-        } else if(dataWznowienia){
-            textContent.append(ch, start, length);
-        
-        } else if(dataZaprzestania){
-            textContent.append(ch, start, length);
-        
-        } else if(dataWykreslenia){
-            textContent.append(ch, start, length);
-        
-        } else if(malzenskaWspolnoscMajatkowa){
-            textContent.append(ch, start, length);
-        
-        } else if(status){
-            textContent.append(ch, start, length);
-        
-        } else if(pkd){
-            textContent.append(ch, start, length);
-        
-        } else if(uprawnienieTekst){
-            textContent.append(ch, start, length);
-            
-        } else if(terytTerc){
-            textContent.append(ch, start, length);
-            
-        } else if(terytSimc){
-            textContent.append(ch, start, length);
-            
-        } else if(terytUlic){
-            textContent.append(ch, start, length);
-            
-        } else if(opisLokalizacji){
+        if(drukuj){
             textContent.append(ch, start, length);
         }
         
     }
+
+    private boolean doPrinting(){
+
+        return identyfikatorWpisu ||
+                imie ||
+                nazwisko ||
+                nip ||
+                regon ||
+                nazwaFirmy ||
+                adresPocztyElektronicznej ||
+                adresStronyInternetowej ||
+                telefon ||
+                faks ||
+                miejscowosc ||
+                ulica ||
+                budynek ||
+                lokal ||
+                kodPocztowy ||
+                poczta ||
+                powiat ||
+                wojewodztwo ||
+                dTerytTerc ||
+                dTerytSimc ||
+                dTerytUlic ||
+                dWojewodztwo ||
+                dPowiat ||
+                dGmina ||
+                dMiejscowosc ||
+                dUlica ||
+                dBudynek ||
+                dLokal ||
+                dKodPocztowy ||
+                dPoczta ||
+                obywatelstwo ||
+                dataRozpoczecia ||
+                dataZawieszenia ||
+                dataWznowienia ||
+                dataZaprzestania ||
+                dataWykreslenia ||
+                malzenskaWspolnoscMajatkowa ||
+                status ||
+                pkd ||
+                uprawnienieTekst ||
+                terytTerc ||
+                terytSimc ||
+                terytUlic ||
+                opisLokalizacji;
+
+    }
+
     //zmienne strumieni danych
     private final FileWriter outSFirma;
     private final FileWriter outSUprawnienie;
@@ -850,5 +776,7 @@ public class MyHandler extends DefaultHandler{
     private boolean status = false;
     private boolean pkd = false;
     private boolean uprawnienieTekst = false;
+
+    private boolean drukuj = false;
     
 }
